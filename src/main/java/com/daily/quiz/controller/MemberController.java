@@ -2,6 +2,7 @@ package com.daily.quiz.controller;
 
 import com.daily.quiz.dto.SignUpDTO;
 import com.daily.quiz.service.MemberService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,20 @@ public class MemberController {
     public String signUp(@ModelAttribute SignUpDTO dto){
 
         memberService.signUp(dto);
+        return "redirect:/";
+    }
+
+    @GetMapping("/signIn")
+    public String signInGet(){
+
+        return "/signIn";
+    }
+
+    @PostMapping("/signIn")
+    public String signIn(@RequestParam("username") String username,
+                         @RequestParam("password") String password){
+        memberService.signIn(username, password);
+
         return "redirect:/";
     }
 
