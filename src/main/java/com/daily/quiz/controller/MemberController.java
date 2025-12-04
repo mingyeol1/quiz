@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class MemberController {
 
     @GetMapping("/signUp")
     public String signUpGet(){
-        return "/signUp";
+        return "/member/signUp";
     }
 
     @PostMapping("/signUp")
@@ -34,14 +37,20 @@ public class MemberController {
     @GetMapping("/signIn")
     public String signInGet(){
 
-        return "/signIn";
+        return "/member/signIn";
     }
 
     @PostMapping("/signIn")
     public String signIn(@RequestParam("username") String username,
-                         @RequestParam("password") String password){
-        memberService.signIn(username, password);
-
+                         @RequestParam("password") String password,
+                         RedirectAttributes redirectAttributes){
+        try {
+            memberService.signIn(username, password);
+        } catch (NoSuchElementException
+                 | IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/member/signIn";
+        }
         return "redirect:/";
     }
 

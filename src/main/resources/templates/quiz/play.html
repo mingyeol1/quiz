@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>문제 풀기</h2>
+
+    <div th:each="qa : ${questions}">
+        <p>[[${qa.questionOrder}]]. [[${qa.word.word}]] 의 뜻은?</p>
+        <p>예문 : [[${qa.word.example}]]</p>
+        <p>해석 : [[${qa.word.translation}]]</p>
+        <form th:action="@{/quiz/submit}" method="post">
+            <input type="hidden" name="answerId" th:value="${qa.id}">
+            <input type="hidden" name="wordId" th:value="${qa.word.id}">
+            <input type="text" name="memberAnswer">
+            <button type="submit">제출</button>
+        </form>
+    </div>
+</body>
+</html>

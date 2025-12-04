@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>퀴즈풀기</title>
+</head>
+<body>
+<form th:action="@{/quizStart}" method="post">
+    <input name="memberId" placeholder="memberId">
+    <input name="count" placeholder="몇문제">
+
+    <button type="submit">출제</button>
+</form>
+</body>
+</html>

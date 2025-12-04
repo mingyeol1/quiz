@@ -25,7 +25,7 @@ public class MemberService {
         Optional<Member> member = memberRepository.findByUsername(username);
         Member findMember = member.orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
 
-        if (!findMember.getUsername().equals(username) || !findMember.getPassword().equals(password)){
+        if (!findMember.getPassword().equals(password)){
             throw new IllegalArgumentException("아이디 및 비밀번호가 다릅니다.");
         }
 
