@@ -48,7 +48,7 @@ public class QuizAnswerController {
     }
 
     @PostMapping("/quiz/submit")
-    public String quizSubmit(@RequestParam String memberAnswer, @RequestParam Long wordId){
+    public String quizSubmit(@RequestParam Long wordId,@RequestParam String memberAnswer){
         quizAnswerService.quizSubmit(wordId,memberAnswer);
 
         return "/quiz/result";

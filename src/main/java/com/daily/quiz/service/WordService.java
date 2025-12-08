@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class WordService {
-    public final WordRepository wordRepository;
+    private final WordRepository wordRepository;
 
 
     //모든 영단어 및 정답을 가져오는 메서드
