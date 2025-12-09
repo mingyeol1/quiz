@@ -62,23 +62,32 @@ public class QuizAnswerService {
         return quizAnswerRepository.findByQuizSessionId(sessionId);
     }
 
+    //사용자가 정답(memberAnswer를 입력하면 정답을 체크하는 로직)
+    //answerId는 해당 word가 저장된 answer를 검색
     @Transactional
-    public void quizSubmit(Long answerId, String memberAnswer) {
+    public Map<String, Object> quizSubmit(Long answerId, String memberAnswer) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answerId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 문제입니다."));
 
-        String answers = quizAnswer.getWord().getAnswer(); // 정답이 여러개일경우 ,로 구분해서 처리
+        String correctAnswer = quizAnswer.getWord().getAnswer(); // 정답이 여러개일경우 ,로 구분해서 처리
         //대소문자가 들어울 수 있으니 모두 소문자 처리
-        String answer = memberAnswer.trim().toLowerCase();
+        String userAnswer = memberAnswer.trim().toLowerCase();
 
         //  정답이 여러개일 경우
-        boolean isCorrect = Arrays.stream(answers.split(","))
+        boolean isCorrect = Arrays.stream(correctAnswer.split(","))
                 .map(String::trim)
                 .map(String::toLowerCase)
-                .anyMatch(ans -> ans.equals(answer));
+                .anyMatch(ans -> ans.equals(userAnswer));
 
         quizAnswer.setIsCorrect(isCorrect);
+        quizAnswer.setMemberAnswer(memberAnswer);
         quizAnswer.setAnsweredAt(LocalDateTime.now());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("isCorrect", isCorrect);
+        result.put("correctAnswer", correctAnswer);
+
+        return result;
     }
 
 }
