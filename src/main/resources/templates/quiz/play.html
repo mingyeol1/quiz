@@ -1,22 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>영어 단어 퀴즈</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h2>문제 풀기</h2>
 
-    <div th:each="qa : ${questions}">
-        <p>[[${qa.questionOrder}]]. [[${qa.word.word}]] 의 뜻은?</p>
-        <p>예문 : [[${qa.word.example}]]</p>
-        <p>해석 : [[${qa.word.translation}]]</p>
-        <form th:action="@{/quiz/submit}" method="post">
-            <input type="hidden" name="answerId" th:value="${qa.id}">
-            <input type="hidden" name="wordId" th:value="${qa.word.id}">
-            <input type="text" name="memberAnswer">
-            <button type="submit">제출</button>
+<div class="container" id="quizContainer">
+    <h2 id="quizHeader">영어 단어 퀴즈</h2>
+    <div id="questionArea" style="display: none;">
+        <p class="question-header">
+            <span id="questionOrder"></span> / <span id="totalQuestions"></span>
+        </p>
+        <p class="question-word" id="word"></p>
+        <div class="example-sentence">
+            <p><strong>예문:</strong> <span id="example"></span></p>
+            <p><strong>해석:</strong> <span id="translation"></span></p>
+        </div>
+        <form id="answerForm" class="answer-form">
+            <input type="text" id="memberAnswer" class="form-input" autocomplete="off" placeholder="정답을 입력하세요">
+            <button type="submit" class="form-button">제출</button>
         </form>
+        <div class="feedback" id="feedback"></div>
     </div>
+    <div id="loadingMessage">
+        <p>문제를 불러오는 중입니다...</p>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const quizContainer = document.getElementById('quizContainer');
+        const questionArea = document.getElementById('questionArea');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const answerForm = document.getElementById('answerForm');
+        const memberAnswerInput = document.getElementById('memberAnswer');
+        const feedbackDiv = document.getElementById('feedback');
+
+        const sessionId = new URLSearchParams(window.location.search).get('sessionId');
+        let questions = [];
+        let currentQuestionIndex = 0;
+
+        // API를 통해 문제 데이터 가져오기
+        fetch(`/api/quiz/${sessionId}/questions`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                questions = data;
+                if (questions && questions.length > 0) {
+                    loadingMessage.style.display = 'none';
+                    questionArea.style.display = 'block';
+                    displayQuestion(currentQuestionIndex);
+                } else {
+                    loadingMessage.innerHTML = '<p>풀 문제가 없습니다. 시작 화면으로 돌아가세요.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching questions:', error);
+                loadingMessage.innerHTML = '<p>문제 로딩에 실패했습니다. 다시 시도해주세요.</p>';
+            });
+
+        function displayQuestion(index) {
+            const question = questions[index];
+            document.getElementById('questionOrder').textContent = index + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            document.getElementById('word').textContent = question.word;
+            document.getElementById('example').textContent = question.example;
+            document.getElementById('translation').textContent = question.translation;
+            memberAnswerInput.value = '';
+            memberAnswerInput.focus();
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback';
+        }
+
+        answerForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const memberAnswer = memberAnswerInput.value.trim();
+            if (!memberAnswer) {
+                feedbackDiv.textContent = '답을 입력해주세요!';
+                feedbackDiv.className = 'feedback incorrect';
+                return;
+            }
+
+            const currentQuestion = questions[currentQuestionIndex];
+            const payload = {
+                answerId: String(currentQuestion.id),
+                memberAnswer: memberAnswer
+            };
+
+            fetch('/api/quiz/submit-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.isCorrect) {
+                    feedbackDiv.textContent = '정답입니다!';
+                    feedbackDiv.className = 'feedback correct';
+                } else {
+                    feedbackDiv.textContent = `오답입니다! (정답: ${result.correctAnswer})`;
+                    feedbackDiv.className = 'feedback incorrect';
+                }
+
+                // 다음 문제로 넘어가기 전 딜레이
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        quizContainer.classList.add('fade-out');
+                        setTimeout(() => {
+                            displayQuestion(currentQuestionIndex);
+                            quizContainer.classList.remove('fade-out');
+                        }, 300); // fade-out 시간과 동일하게 설정
+                    } else {
+                        // 퀴즈 종료, 결과 페이지로 이동
+                        window.location.href = '/quiz/result'; // 추후 세션 ID 등을 넘겨 결과 상세 페이지로 이동 가능
+                    }
+                }, 1500); // 1.5초 후 다음 문제로
+            })
+            .catch(error => {
+                console.error('Error submitting answer:', error);
+                feedbackDiv.textContent = '답안 제출 중 오류가 발생했습니다.';
+                feedbackDiv.className = 'feedback incorrect';
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
