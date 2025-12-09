@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +31,7 @@ public class QuizAnswerService {
         // 1. 세션 생성
         QuizSession session = new QuizSession();
         session.setTotalCount(questionCount);
+        //회원 가입을 하지 않아도 문제를 풀 수 있음
         session.setMember(memberId != null ? memberRepository.findById(memberId).orElse(null) : null);
 
         quizSessionRepository.save(session);
@@ -46,13 +44,15 @@ public class QuizAnswerService {
 
         // 3. 문제 생성
         int order = 1;
+        List<QuizAnswer> answers = new ArrayList<>();
         for (Word word : words) {
             QuizAnswer answer = new QuizAnswer();
             answer.setQuizSession(session);
             answer.setWord(word);
             answer.setQuestionOrder(order++);
-            quizAnswerRepository.save(answer);
+            answers.add(answer);
         }
+        quizAnswerRepository.saveAll(answers);
 
         return session;
     }
