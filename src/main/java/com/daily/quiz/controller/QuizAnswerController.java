@@ -74,6 +74,7 @@ public class QuizAnswerController {
     @PostMapping("/api/quiz/submit-answer")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> submitAnswer(@RequestBody Map<String, String> payload) {
+        //JSON으로 값을 받아오기 때문에 Long타입으로 변환.
         Long answerId = Long.parseLong(payload.get("answerId"));
         String memberAnswer = payload.get("memberAnswer");
 

@@ -79,8 +79,11 @@ public class QuizAnswerService {
                 .map(String::toLowerCase)
                 .anyMatch(ans -> ans.equals(userAnswer));
 
+        //맞았는지 틀렸는지 여부
         quizAnswer.setIsCorrect(isCorrect);
+        //내가 쓴 정답 입력
         quizAnswer.setMemberAnswer(memberAnswer);
+        //맞춘시간대 입력
         quizAnswer.setAnsweredAt(LocalDateTime.now());
 
         Map<String, Object> result = new HashMap<>();
