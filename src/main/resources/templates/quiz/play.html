@@ -39,6 +39,10 @@
         const feedbackDiv = document.getElementById('feedback');
 
         const sessionId = new URLSearchParams(window.location.search).get('sessionId');
+            if (!sessionId) {
+                loadingMessage.innerHTML = '<p>세션 ID가 없습니다. 시작 화면으로 돌아가세요.</p>';
+                return;
+           }
         let questions = [];
         let currentQuestionIndex = 0;
 
