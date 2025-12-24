@@ -35,7 +35,8 @@ public class Member extends BaseEntity{
         this.nickname = nickname;
         return new SignUpDTO(username, password, nickname);
     }
-
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
     public void addRole(MemberRole role){
         this.roleSet.add(role);
     }

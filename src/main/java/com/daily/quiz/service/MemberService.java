@@ -19,7 +19,7 @@ public class MemberService {
 
     public void signUp(SignUpDTO dto){
         Member member = new Member();
-        member.signUp(dto.getUsername(), dto.getPassword(), passwordEncoder.encode(dto.getNickname()));
+        member.signUp(dto.getUsername(), passwordEncoder.encode(dto.getPassword()), dto.getNickname());
 
         //디폴트 값으로 USER값 저장
         member.addRole(MemberRole.USER);
@@ -31,7 +31,7 @@ public class MemberService {
         Optional<Member> member = memberRepository.findByUsername(username);
         Member findMember = member.orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
 
-        if (!passwordEncoder.matches(findMember.getPassword(), password)){
+        if (!passwordEncoder.matches(password , findMember.getPassword())){
             throw new IllegalArgumentException("아이디 및 비밀번호가 다릅니다.");
         }
 

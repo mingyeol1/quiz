@@ -46,11 +46,9 @@ public class MemberController {
                          RedirectAttributes redirectAttributes){
         try {
             memberService.signIn(username, password);
-            System.out.println("값이 잘못 입력됨?" + username + password);
         } catch (NoSuchElementException
                  | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            System.out.println("값이 잘못 입력됨?" + username + password);
             return "redirect:/member/signIn";
         }
         return "redirect:/";
