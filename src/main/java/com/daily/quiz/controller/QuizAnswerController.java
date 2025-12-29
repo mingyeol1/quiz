@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+import org.springframework.security.core.Authentication;
+import com.daily.quiz.dto.MemberSecurityDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -22,8 +25,14 @@ public class QuizAnswerController {
     private final QuizSessionService quizSessionService;
 
     @GetMapping("/quizStart")
-    public String QuizStartGet(){
-
+    public String QuizStartGet(Model model, Authentication authentication){
+        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof MemberSecurityDTO memberSecurityDTO) {
+            model.addAttribute("userNickname", memberSecurityDTO.getNickname());
+            model.addAttribute("memberId", memberSecurityDTO.getId());
+        } else {
+            model.addAttribute("userNickname", "비 회원자 입니다.");
+            model.addAttribute("memberId", null);
+        }
         return "/quiz/quizStart";
     }
 
