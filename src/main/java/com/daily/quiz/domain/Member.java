@@ -24,7 +24,8 @@ public class Member extends BaseEntity{
     //유저의 닉네임 / 닉네임값도 고유하도록 만듦.
     @Column(unique = true)
     private String nickname;
-
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
     private final Set<MemberRole> roleSet = new HashSet<>();
 
 
@@ -35,8 +36,7 @@ public class Member extends BaseEntity{
         this.nickname = nickname;
         return new SignUpDTO(username, password, nickname);
     }
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Enumerated(EnumType.STRING)
+
     public void addRole(MemberRole role){
         this.roleSet.add(role);
     }
