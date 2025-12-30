@@ -25,7 +25,7 @@ public class MemberDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Member> findMember = memberRepository.findByUsernameWithRoles(username);
 
-        Member member = findMember.orElseThrow(() -> new NoSuchElementException("존재하는 회원 x"));
+        Member member = findMember.orElseThrow(() -> new UsernameNotFoundException("존재하는 회원 x"));
 
 
         return new MemberSecurityDTO(
