@@ -154,3 +154,88 @@ h2 {
     color: #6c757d; /* Slightly muted text color */
     pointer-events: none; /* Prevent any pointer events like clicking or text selection */
 }
+
+/* Table styles for history page */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.table thead tr {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: left;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.table tbody tr:last-of-type {
+
+    border-bottom: 2px solid #007bff;
+
+}
+
+
+
+/* Pagination styles */
+
+.pagination {
+
+    margin-top: 20px;
+
+    text-align: center;
+
+}
+
+
+
+.pagination a, .pagination strong {
+
+    margin: 0 5px;
+
+    padding: 5px 10px;
+
+    text-decoration: none;
+
+    border: 1px solid #ddd;
+
+    color: #007bff;
+
+    border-radius: 4px;
+
+}
+
+
+
+.pagination a:hover {
+
+    background-color: #f4f4f4;
+
+}
+
+
+
+.pagination strong {
+
+    font-weight: bold;
+
+    color: #fff;
+
+    background-color: #007bff;
+
+    border-color: #007bff;
+
+}

@@ -11,18 +11,28 @@
     <div style="margin-bottom: 20px;">
         <span th:if="${userNickname == '비 회원자 입니다.'}">(비 회원자는 퀴즈 기록이 저장되지 않습니다.)</span>
     </div>
-    <form th:action="@{/quizStart}" method="post" class="form-container">
-        <!-- 회원 ID 처리 -->
-        <div th:if="${memberId != null}" >
-            <input type="hidden" id="memberId" name="memberId" th:value="${memberId}">
-        </div>
-        <!-- 비회원일 경우 memberId 입력 필드는 필요 없음 -->
+    <!-- The form for DB-saving quiz is removed -->
+    <div class="form-container">
         <div>
             <label for="count">문제 수</label>
             <input type="number" id="count" name="count" class="form-input" placeholder="풀고 싶은 문제 수를 입력하세요" required>
         </div>
-        <button type="submit" class="form-button">퀴즈 시작</button>
-    </form>
+        <!-- Only the "DB 저장 없이 시작" button remains -->
+        <button type="button" id="dynamicStartBtn" class="form-button">퀴즈 시작</button>
+    </div>
 </div>
+
+<script>
+    document.getElementById('dynamicStartBtn').addEventListener('click', function() {
+        const countInput = document.getElementById('count');
+        const count = countInput.value;
+        if (!count || count <= 0) {
+            alert('문제 수를 입력해주세요.');
+            countInput.focus();
+            return;
+        }
+        window.location.href = `/quiz/play/dynamic?count=${count}`;
+    });
+</script>
 </body>
 </html>

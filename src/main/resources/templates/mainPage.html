@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>매일매일 영어 퀴즈</title>
@@ -11,8 +11,12 @@
     <p style="margin-bottom: 30px;">아래 메뉴에서 원하시는 항목을 선택해주세요.</p>
     <div>
         <a th:href="@{/quizStart}" class="button-link">퀴즈 풀기</a>
-        <a th:href="@{/signUp}" class="button-link secondary">회원가입</a>
-        <a th:href="@{/signIn}" class="button-link secondary">로그인</a>
+        <!-- 로그인한 사용자에게만 보임 -->
+        <a th:href="@{/quiz/history}" class="button-link" sec:authorize="isAuthenticated()">나의 퀴즈 기록</a>
+        <a th:href="@{/logout}" class="button-link secondary" sec:authorize="isAuthenticated()">로그아웃</a>
+        <!-- 비로그인 사용자에게만 보임 -->
+        <a th:href="@{/signUp}" class="button-link secondary" sec:authorize="!isAuthenticated()">회원가입</a>
+        <a th:href="@{/signIn}" class="button-link secondary" sec:authorize="!isAuthenticated()">로그인</a>
     </div>
 </div>
 </body>

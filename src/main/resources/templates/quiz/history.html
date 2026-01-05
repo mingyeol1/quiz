@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>퀴즈 기록</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>나의 퀴즈 기록</h2>
+    <div th:if="${historyPage.empty}">
+        <p>아직 저장된 퀴즈 기록이 없습니다.</p>
+    </div>
+    <table class="table" th:unless="${historyPage.empty}">
+        <thead>
+        <tr>
+            <th>푼 날짜</th>
+            <th>점수</th>
+            <th>상세보기</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${historyPage.content}">
+            <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}">2023-10-27 14:00</td>
+            <td th:text="|${item.totalCount}문제 중 ${item.correctCount}개 정답|">10문제 중 8개 정답</td>
+            <td>
+                <a th:href="@{/quiz/result(sessionId=${item.sessionId})}" class="button-link secondary">결과 보기</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div th:if="${!historyPage.empty}" class="pagination">
+        <!-- Previous Page Link -->
+        <a th:if="${historyPage.hasPrevious()}" th:href="@{/quiz/history(page=${historyPage.number - 1})}">&laquo;</a>
+
+        <span th:each="pageNumber : ${#numbers.sequence(0, historyPage.totalPages - 1)}">
+            <a th:if="${pageNumber != historyPage.number}"
+               th:href="@{/quiz/history(page=${pageNumber})}"
+               th:text="${pageNumber + 1}">1</a>
+            <strong th:if="${pageNumber == historyPage.number}"
+                    th:text="${pageNumber + 1}">1</strong>
+        </span>
+
+        <!-- Next Page Link -->
+        <a th:if="${historyPage.hasNext()}" th:href="@{/quiz/history(page=${historyPage.number + 1})}">&raquo;</a>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="/" class="form-button">메인으로</a>
+    </div>
+</div>
+</body>
+</html>
