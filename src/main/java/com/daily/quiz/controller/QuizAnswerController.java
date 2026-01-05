@@ -57,8 +57,14 @@ public class QuizAnswerController {
 
     @GetMapping("/quiz/play/dynamic")
     public String playDynamicQuiz(@RequestParam int count, Model model, Authentication authentication) {
+        
+        //문제 최댓값 설정
+        if (count <= 0 || count > 50) {
+            return "redirect:/quizStart?error=invalidCount";
+        }
+        
         model.addAttribute("questionCount", count);
-        model.addAttribute("isDynamic", true); // A flag to tell the template
+        model.addAttribute("isDynamic", true); 
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof MemberSecurityDTO memberSecurityDTO) {
             model.addAttribute("memberId", memberSecurityDTO.getId());
         } else {
@@ -130,6 +136,11 @@ public class QuizAnswerController {
     public ResponseEntity<List<GeneratedQuizQuestion>> generateUnsavedQuiz(
             @PathVariable int questionCount
     ) {
+        //문제 최댓값
+        if (questionCount <= 0 || questionCount > 50) {
+                   return ResponseEntity.badRequest().build();
+                }
+        
         List<GeneratedQuizQuestion> questions = quizAnswerService.generateUnsavedQuizQuestions(questionCount);
         return ResponseEntity.ok(questions);
     }
