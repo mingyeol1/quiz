@@ -34,6 +34,8 @@ public class CustomSecurityConfig {
         //로그인 페이지 및 로그인 성공 후 페이지 설정
         http.formLogin(from -> { //폼 기반 로그인 활성화
             from.loginPage("/signIn")
+                    .loginProcessingUrl("/signIn")
+                    .failureUrl("/signIn?error=true")
                     //로그인 성공시 메인페이지 이동
                     .defaultSuccessUrl("/");
         });

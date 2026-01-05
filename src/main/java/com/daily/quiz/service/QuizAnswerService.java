@@ -100,13 +100,16 @@ public class QuizAnswerService {
 //        return result;
 //    }
 
+    //문제 생성 메서드
     @Transactional(readOnly = true)
     public List<GeneratedQuizQuestion> generateUnsavedQuizQuestions(int questionCount) {
         Pageable pageable = PageRequest.of(0, questionCount);
         List<Word> words = wordRepository.findRandomWords(pageable);
 
         List<GeneratedQuizQuestion> questions = new ArrayList<>();
+        //최소 1문제
         int order = 1;
+        //문제 리스트 생성
         for (Word word : words) {
             questions.add(new GeneratedQuizQuestion(word, order++));
         }
@@ -120,18 +123,26 @@ public class QuizAnswerService {
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 단어입니다. ID: " + wordId));
 
         String correctAnswer = word.getAnswer();
-        String userAnswer = memberAnswer.trim().toLowerCase();
+        // 사용자 입력 정규화
+        String userNormalized = normalize(memberAnswer);
 
         boolean isCorrect = Arrays.stream(correctAnswer.split(","))
                 .map(String::trim)
-                .map(String::toLowerCase)
-                .anyMatch(ans -> ans.equals(userAnswer));
+                .map(this::normalize)   //현재 메서드 객체를 참조
+                .anyMatch(ans -> ans.equals(userNormalized));
 
         Map<String, Object> result = new HashMap<>();
         result.put("isCorrect", isCorrect);
         result.put("correctAnswer", correctAnswer);
 
         return result;
+    }
+
+    //해당 정답 공백 제거
+    private String normalize(String input) {
+        return input
+                .toLowerCase()
+                .replaceAll("\\s+", ""); // 모든 공백 제거
     }
 
     @Transactional
