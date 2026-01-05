@@ -25,7 +25,7 @@ public class QuizSession {
     private int totalCount; //출제 문제 수
     private int correctCount; //맞힌 문제 수
     @CreationTimestamp
-    private LocalDateTime startedAt; //시작시간
+    private LocalDateTime createdAt; //시작시간
     private LocalDateTime endedAt;  //종료시간
 
     @OneToMany(mappedBy = "quizSession", cascade = CascadeType.ALL)

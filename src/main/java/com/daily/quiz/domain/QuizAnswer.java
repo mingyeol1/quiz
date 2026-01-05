@@ -32,7 +32,7 @@ public class QuizAnswer {
     private String memberAnswer;
 
     //맞췄는지
-    private Boolean isCorrect;
+    private boolean correct;
 
     //답변시간
     private LocalDateTime answeredAt;
