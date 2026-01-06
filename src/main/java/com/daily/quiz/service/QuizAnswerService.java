@@ -69,37 +69,6 @@ public class QuizAnswerService {
         return quizAnswerRepository.findBySessionIdWithWord(sessionId);
     }
 
-//    //사용자가 정답(memberAnswer를 입력하면 정답을 체크하는 로직)
-//    //answerId는 해당 word가 저장된 answer를 검색
-//    @Transactional
-//    public Map<String, Object> quizSubmit(Long answerId, String memberAnswer) {
-//        QuizAnswer quizAnswer = quizAnswerRepository.findById(answerId)
-//                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 문제입니다."));
-//
-//        String correctAnswer = quizAnswer.getWord().getAnswer(); // 정답이 여러개일경우 ,로 구분해서 처리
-//        //대소문자가 들어울 수 있으니 모두 소문자 처리
-//        String userAnswer = memberAnswer.trim().toLowerCase();
-//
-//        //  정답이 여러개일 경우
-//        boolean isCorrect = Arrays.stream(correctAnswer.split(","))
-//                .map(String::trim)
-//                .map(String::toLowerCase)
-//                .anyMatch(ans -> ans.equals(userAnswer));
-//
-//        //맞았는지 틀렸는지 여부
-//        quizAnswer.setIsCorrect(isCorrect);
-//        //내가 쓴 정답 입력
-//        quizAnswer.setMemberAnswer(memberAnswer);
-//        //맞춘시간대 입력
-//        quizAnswer.setAnsweredAt(LocalDateTime.now());
-//
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("isCorrect", isCorrect);
-//        result.put("correctAnswer", correctAnswer);
-//
-//        return result;
-//    }
-
     //문제 생성 메서드
     @Transactional(readOnly = true)
     public List<GeneratedQuizQuestion> generateUnsavedQuizQuestions(int questionCount) {
