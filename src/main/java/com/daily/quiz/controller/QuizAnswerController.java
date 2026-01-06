@@ -57,14 +57,14 @@ public class QuizAnswerController {
 
     @GetMapping("/quiz/play/dynamic")
     public String playDynamicQuiz(@RequestParam int count, Model model, Authentication authentication) {
-        
+
         //문제 최댓값 설정
         if (count <= 0 || count > 50) {
             return "redirect:/quizStart?error=invalidCount";
         }
-        
+
         model.addAttribute("questionCount", count);
-        model.addAttribute("isDynamic", true); 
+        model.addAttribute("isDynamic", true);
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof MemberSecurityDTO memberSecurityDTO) {
             model.addAttribute("memberId", memberSecurityDTO.getId());
         } else {
@@ -73,12 +73,6 @@ public class QuizAnswerController {
         return "/quiz/play";
     }
 
-//    @PostMapping("/quiz/submit")
-//    public String quizSubmit(@RequestParam Long answerId,@RequestParam String memberAnswer){
-//        quizAnswerService.quizSubmit(answerId,memberAnswer);
-//
-//        return "/quiz/result";
-//    }
 
     @GetMapping("/quiz/result")
     public String quizResult(@RequestParam Long sessionId, Authentication authentication, Model model) {
@@ -92,7 +86,7 @@ public class QuizAnswerController {
             }
             MemberSecurityDTO memberDetails = (MemberSecurityDTO) authentication.getPrincipal();
             if (!session.getMember().getId().equals(memberDetails.getId())) {
-                // 자신의 퀴즈 결과만 볼 수 있음 (추후 필요시 관리자 예외 처리)
+                // 자신의 퀴즈 결과만 볼 수 있음
                 // 여기서는 간단히 홈으로 리다이렉트
                 return "redirect:/";
             }
@@ -119,18 +113,9 @@ public class QuizAnswerController {
         return ResponseEntity.ok(questionDTOs);
     }
 
-//    @PostMapping("/api/quiz/submit-answer")
-//    @ResponseBody
-//    public ResponseEntity<Map<String, Object>> submitAnswer(@RequestBody Map<String, String> payload) {
-//        //JSON으로 값을 받아오기 때문에 Long타입으로 변환.
-//        Long answerId = Long.parseLong(payload.get("answerId"));
-//        String memberAnswer = payload.get("memberAnswer");
-//
-//        Map<String, Object> result = quizAnswerService.quizSubmit(answerId, memberAnswer);
-//
-//        return ResponseEntity.ok(result);
-//    }
 
+
+    //문제 생성
     @GetMapping("/api/quiz/generate/{questionCount}")
     @ResponseBody
     public ResponseEntity<List<GeneratedQuizQuestion>> generateUnsavedQuiz(
@@ -140,7 +125,7 @@ public class QuizAnswerController {
         if (questionCount <= 0 || questionCount > 50) {
                    return ResponseEntity.badRequest().build();
                 }
-        
+
         List<GeneratedQuizQuestion> questions = quizAnswerService.generateUnsavedQuizQuestions(questionCount);
         return ResponseEntity.ok(questions);
     }
