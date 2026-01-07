@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>퀴즈 결과</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .correct { color: green; }
+        .incorrect { color: red; }
+        .result-table td { padding: 8px; border-bottom: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>퀴즈 결과</h2>
+    <div class="result-summary">
+        <h3>
+            총 <span th:text="${session.totalCount}">10</span>문제 중
+            <strong class="correct" th:text="${correctCount}">8</strong>개를 맞추셨습니다!
+        </h3>
+    </div>
+
+    <table class="table result-table">
+        <thead>
+        <tr>
+            <th>문제</th>
+            <th>제출한 답</th>
+            <th>정답</th>
+            <th>결과</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="answer : ${answers}">
+            <td th:text="${answer.word.word}">obvious</td>
+            <td th:text="${answer.memberAnswer}"
+                th:class="${answer.correct} ? 'correct' : 'incorrect'">obvious</td>
+            <td th:text="${answer.word.answer}">obvious</td>
+            <td>
+                <span th:if="${answer.correct}" class="correct">O</span>
+                <span th:unless="${answer.correct}" class="incorrect">X</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px;">
+        <a th:if="${session.member != null}" href="/quiz/history" class="form-button secondary">기록 목록</a>
+        <a href="/" class="form-button">메인으로</a>
+    </div>
+</div>
+</body>
+</html>
