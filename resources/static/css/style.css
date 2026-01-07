@@ -1,0 +1,241 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f7f9;
+}
+
+/* Generic container for all pages */
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.container.fade-out {
+    opacity: 0;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 30px;
+}
+
+/* Form styling */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+
+.form-container label {
+    font-weight: bold;
+    color: #555;
+}
+
+.form-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-button {
+    padding: 15px 25px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 15px;
+}
+
+.form-button:hover {
+    background-color: #0056b3;
+}
+
+/* Links styled as buttons */
+.button-link {
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    margin: 5px;
+}
+
+.button-link:hover {
+    background-color: #0056b3;
+}
+
+.button-link.secondary {
+    background-color: #6c757d;
+}
+.button-link.secondary:hover {
+    background-color: #5a6268;
+}
+
+
+/* --- Styles specific to play.html --- */
+#quizContainer .question-header {
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+#quizContainer .question-word {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+#quizContainer .example-sentence {
+    text-align: left;
+    font-style: italic;
+    color: #777;
+    margin-bottom: 25px;
+    padding: 15px;
+    border-left: 3px solid #007bff;
+    background-color: #f8f9fa;
+}
+
+#quizContainer .answer-form {
+    display: flex;
+    gap: 10px;
+}
+
+#quizContainer .answer-form .form-input {
+    flex-grow: 1;
+    width: auto; /* Override the 100% width for flex-row layout */
+}
+
+#quizContainer .feedback {
+    margin-top: 15px;
+    font-size: 1.1em;
+    font-weight: bold;
+    height: 25px;
+}
+
+#quizContainer .feedback.correct {
+    color: #28a745;
+}
+
+#quizContainer .feedback.incorrect {
+    color: #dc3545;
+}
+
+.form-input-readonly {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #e9ecef; /* Light gray background to indicate read-only */
+    color: #6c757d; /* Slightly muted text color */
+    pointer-events: none; /* Prevent any pointer events like clicking or text selection */
+}
+
+/* Table styles for history page */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.table thead tr {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: left;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.table tbody tr:last-of-type {
+
+    border-bottom: 2px solid #007bff;
+
+}
+
+
+
+/* Pagination styles */
+
+.pagination {
+
+    margin-top: 20px;
+
+    text-align: center;
+
+}
+
+
+
+.pagination a, .pagination strong {
+
+    margin: 0 5px;
+
+    padding: 5px 10px;
+
+    text-decoration: none;
+
+    border: 1px solid #ddd;
+
+    color: #007bff;
+
+    border-radius: 4px;
+
+}
+
+
+
+.pagination a:hover {
+
+    background-color: #f4f4f4;
+
+}
+
+
+
+.pagination strong {
+
+    font-weight: bold;
+
+    color: #fff;
+
+    background-color: #007bff;
+
+    border-color: #007bff;
+
+}

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>영어 단어 퀴즈</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="container" id="quizContainer">
+    <h2 id="quizHeader">영어 단어 퀴즈</h2>
+    <div id="questionArea" style="display: none;">
+        <p class="question-header">
+            <span id="questionOrder"></span> / <span id="totalQuestions"></span>
+        </p>
+        <p class="question-word" id="word"></p>
+        <div class="example-sentence">
+            <p><strong>예문:</strong> <span id="example"></span></p>
+            <p><strong>해석:</strong> <span id="translation"></span></p>
+        </div>
+        <form id="answerForm" class="answer-form">
+            <input type="text" id="memberAnswer" class="form-input" autocomplete="off" placeholder="정답을 입력하세요">
+            <button type="submit" class="form-button">제출</button>
+        </form>
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div id="quizEndArea" style="display: none; text-align: center;">
+        <h3>퀴즈 종료!</h3>
+        <p id="finalScore"></p>
+        <div id="endButtons" class="form-container">
+             <!-- 버튼들이 동적으로 추가될 영역 -->
+        </div>
+    </div>
+
+    <div id="loadingMessage">
+        <p>문제를 불러오는 중입니다...</p>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        // HTML 요소 가져오기
+        const quizContainer = document.getElementById('quizContainer');
+        const questionArea = document.getElementById('questionArea');
+        const quizEndArea = document.getElementById('quizEndArea');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const answerForm = document.getElementById('answerForm');
+        const memberAnswerInput = document.getElementById('memberAnswer');
+        const feedbackDiv = document.getElementById('feedback');
+        const finalScoreP = document.getElementById('finalScore');
+        const endButtonsDiv = document.getElementById('endButtons');
+
+        // Thymeleaf에서 모델 속성 주입
+        const isDynamic = /*[[${isDynamic} ?: false]]*/ false;
+        const questionCount = /*[[${questionCount}?: 0]]*/ 0;
+        const memberId = /*[[${memberId}]]*/ null;
+        const session = /*[[${session}]]*/ null;
+        const sessionId = session ? session.id : new URLSearchParams(window.location.search).get('sessionId');
+
+        // 퀴즈 상태 변수
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let quizResults = []; // 동적 퀴즈 결과 저장용
+
+        // API URL 결정
+        let fetchUrl;
+        if (isDynamic) {
+            fetchUrl = `/api/quiz/generate/${questionCount}`;
+        } else if (sessionId) {
+            fetchUrl = `/api/quiz/${sessionId}/questions`;
+        } else {
+            loadingMessage.innerHTML = '<p>퀴즈 정보를 찾을 수 없습니다. 시작 화면으로 돌아가세요.</p>';
+            return;
+        }
+
+        // 문제 데이터 가져오기
+        fetch(fetchUrl)
+            .then(response => response.ok ? response.json() : Promise.reject('Network response was not ok'))
+            .then(data => {
+                questions = data;
+                if (questions && questions.length > 0) {
+                    loadingMessage.style.display = 'none';
+                    questionArea.style.display = 'block';
+                    displayQuestion(currentQuestionIndex);
+                } else {
+                    loadingMessage.innerHTML = '<p>풀 문제가 없습니다. 시작 화면으로 돌아가세요.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching questions:', error);
+                loadingMessage.innerHTML = '<p>문제 로딩에 실패했습니다. 다시 시도해주세요.</p>';
+            });
+
+        function displayQuestion(index) {
+            const question = questions[index];
+            document.getElementById('questionOrder').textContent = index + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            document.getElementById('word').textContent = question.word;
+            document.getElementById('example').textContent = question.example;
+            document.getElementById('translation').textContent = question.translation;
+            memberAnswerInput.value = '';
+            memberAnswerInput.focus();
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback';
+        }
+
+        answerForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const memberAnswer = memberAnswerInput.value.trim();
+            if (!memberAnswer) {
+                feedbackDiv.textContent = '답을 입력해주세요!';
+                feedbackDiv.className = 'feedback incorrect';
+                return;
+            }
+            answerForm.querySelector('button').disabled = true; // 중복 제출 방지
+
+            const currentQuestion = questions[currentQuestionIndex];
+            let submitUrl;
+            let payload;
+
+            if (isDynamic) {
+                submitUrl = '/api/quiz/check-answer';
+                payload = { wordId: String(currentQuestion.wordId), memberAnswer: memberAnswer };
+            } else {
+                submitUrl = '/api/quiz/submit-answer';
+                payload = { answerId: String(currentQuestion.id), memberAnswer: memberAnswer };
+            }
+
+            fetch(submitUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+            .then(response => response.ok ? response.json() : Promise.reject('Answer submission failed'))
+            .then(result => {
+                if (result.isCorrect) {
+                    feedbackDiv.textContent = '정답입니다!';
+                    feedbackDiv.className = 'feedback correct';
+                } else {
+                    feedbackDiv.textContent = `오답입니다! (정답: ${result.correctAnswer})`;
+                    feedbackDiv.className = 'feedback incorrect';
+                }
+
+                if (isDynamic) {
+                    quizResults.push({
+                        wordId: currentQuestion.wordId,
+                        memberAnswer: memberAnswer,
+                        correct: result.isCorrect,
+                        questionOrder: currentQuestion.questionOrder
+                    });
+                }
+
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        quizContainer.classList.add('fade-out');
+                        setTimeout(() => {
+                            displayQuestion(currentQuestionIndex);
+                            answerForm.querySelector('button').disabled = false;
+                            quizContainer.classList.remove('fade-out');
+                        }, 300);
+                    } else {
+                        finishQuiz();
+                    }
+                }, 1500);
+            })
+            .catch(error => {
+                console.error('Error submitting answer:', error);
+                feedbackDiv.textContent = '답안 제출 중 오류가 발생했습니다.';
+                answerForm.querySelector('button').disabled = false;
+            });
+        });
+
+        function finishQuiz() {
+            questionArea.style.display = 'none';
+            quizEndArea.style.display = 'block';
+
+            if (isDynamic) {
+                const correctAnswers = quizResults.filter(r => r.correct).length;
+                finalScoreP.textContent = `총 ${questions.length}문제 중 ${correctAnswers}개를 맞추셨습니다!`;
+
+                // '다시 풀기' 버튼 추가
+                const retryButton = document.createElement('button');
+                retryButton.textContent = '다시 풀기';
+                retryButton.className = 'form-button secondary';
+                retryButton.onclick = () => window.location.href = '/quizStart';
+                endButtonsDiv.appendChild(retryButton);
+
+                // 로그인 사용자에게만 '결과 저장' 버튼 표시
+                if (memberId) {
+                    const saveButton = document.createElement('button');
+                    saveButton.textContent = '결과 저장';
+                    saveButton.className = 'form-button';
+                    saveButton.onclick = () => saveResults();
+                    endButtonsDiv.appendChild(saveButton);
+                }
+
+            } else {
+                 window.location.href = `/quiz/result?sessionId=${sessionId}`;
+            }
+        }
+
+        function saveResults() {
+            const payload = {
+                totalCount: questions.length,
+                memberId: memberId,
+                results: quizResults
+            };
+
+            const saveButton = endButtonsDiv.querySelector('.form-button');
+            saveButton.disabled = true;
+            saveButton.textContent = '저장 중...';
+
+            fetch('/api/quiz/save-results', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => Promise.reject(text));
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('결과가 성공적으로 저장되었습니다.');
+                window.location.href = `/quiz/result?sessionId=${data.sessionId}`;
+            })
+            .catch(error => {
+                console.error('Error saving results:', error);
+                alert(`결과 저장에 실패했습니다: ${error}`);
+                saveButton.disabled = false;
+                saveButton.textContent = '결과 저장';
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
