@@ -6,23 +6,28 @@
   <title>Word Table</title>
   <style>
     :root{
-      --bg:#0b1020;
-      --panel:#111a33;
-      --panel2:#0f1730;
-      --text:#e9ecf6;
-      --muted:#b8c0d9;
-      --line:rgba(255,255,255,.10);
-      --accent:#6ea8fe;
-      --shadow: 0 14px 38px rgba(0,0,0,.35);
+      /* Light theme aligned with your existing app CSS */
+      --bg:#f4f7f9;                 /* body background */
+      --panel:#ffffff;              /* main panel bg */
+      --panel2:#f8f9fa;             /* secondary panel bg */
+      --text:#333333;               /* base text */
+      --muted:#555555;              /* muted text (labels/subtext) */
+      --line:rgba(0,0,0,.10);       /* borders */
+      --accent:#007bff;             /* primary (same as .form-button) */
+      --shadow: 0 4px 15px rgba(0,0,0,0.10);
     }
 
     *{ box-sizing:border-box; }
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 20% 0%, rgba(110,168,254,.22), transparent 60%),
-                  radial-gradient(900px 500px at 90% 10%, rgba(94,234,212,.12), transparent 50%),
-                  var(--bg);
+
+      /* keep the same “fancy background” structure, but in light tones */
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(0,123,255,.10), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(40,167,69,.08), transparent 50%),
+        var(--bg);
+
       color:var(--text);
       line-height:1.5;
     }
@@ -46,6 +51,7 @@
       margin:0;
       font-size: 22px;
       letter-spacing: .2px;
+      color: var(--text);
     }
 
     .sub{
@@ -68,8 +74,8 @@
       padding: 10px 12px;
       border:1px solid var(--line);
       border-radius: 12px;
-      background: rgba(255,255,255,.04);
-      box-shadow: 0 8px 20px rgba(0,0,0,.22);
+      background: #ffffff;
+      box-shadow: 0 4px 15px rgba(0,0,0,.08);
       min-width: 280px;
     }
     .input label{
@@ -90,15 +96,15 @@
       padding: 9px 12px;
       border:1px solid var(--line);
       border-radius: 999px;
-      background: rgba(255,255,255,.04);
+      background: #ffffff;
       color: var(--muted);
       font-size: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.22);
+      box-shadow: 0 4px 15px rgba(0,0,0,.08);
     }
 
     .panel{
       border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      background: var(--panel);
       border-radius: 16px;
       overflow:hidden;
       box-shadow: var(--shadow);
@@ -120,45 +126,56 @@
       position: sticky;
       top: 0;
       z-index: 2;
-      background: rgba(17,26,51,.92);
-      backdrop-filter: blur(8px);
+
+      /* match your .table thead blue header */
+      background: var(--accent);
+      color: #ffffff;
+
       border-bottom: 1px solid var(--line);
       padding: 12px 12px;
       text-align:left;
       font-size: 12.5px;
       letter-spacing:.3px;
-      color: var(--muted);
       text-transform: uppercase;
       white-space: nowrap;
+
+      /* remove dark blur effect; keep structure same */
+      backdrop-filter: none;
     }
 
     tbody td{
       padding: 12px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
+      border-bottom: 1px solid rgba(0,0,0,.08);
       vertical-align: top;
       font-size: 14px;
+      color: var(--text);
     }
 
     tbody tr:nth-child(odd){
-      background: rgba(255,255,255,.02);
+      /* match your even/odd striping 느낌 */
+      background: #ffffff;
+    }
+    tbody tr:nth-child(even){
+      background: #f3f3f3;
     }
     tbody tr:hover{
-      background: rgba(110,168,254,.08);
+      /* hover with your primary blue tint */
+      background: rgba(0,123,255,.08);
     }
 
     .word{
       font-weight: 700;
-      color: #ffffff;
+      color: #333333;
       letter-spacing:.2px;
     }
     .meaning{
-      color: #dbe4ff;
+      color: #333333;
     }
     .ex-en{
-      color: #e9ecf6;
+      color: #333333;
     }
     .ex-ko{
-      color: var(--muted);
+      color: #6c757d; /* your secondary gray */
       margin-top:6px;
     }
 
@@ -166,9 +183,9 @@
       display:inline-block;
       padding: 3px 8px;
       border-radius: 999px;
-      border:1px solid rgba(110,168,254,.35);
-      color: #dbe4ff;
-      background: rgba(110,168,254,.10);
+      border:1px solid rgba(0,123,255,.35);
+      color: #0056b3;
+      background: rgba(0,123,255,.10);
       font-size: 12px;
       margin-left:8px;
       vertical-align: middle;
@@ -180,8 +197,10 @@
       gap:10px;
       flex-wrap:wrap;
       padding: 10px 12px;
+
       border-top: 1px solid var(--line);
-      background: rgba(15,23,48,.55);
+      background: var(--panel2);
+
       color: var(--muted);
       font-size: 12px;
     }
@@ -190,6 +209,7 @@
       .input{ min-width: 100%; }
       table{ min-width: 860px; }
     }
+
   </style>
 </head>
 
