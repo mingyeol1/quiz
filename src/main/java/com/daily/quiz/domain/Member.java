@@ -30,11 +30,10 @@ public class Member extends BaseEntity{
 
 
     //회원가입 로직
-    public SignUpDTO signUp(String username, String password, String nickname){
+    public void signUp(String username, String password, String nickname){
         this.username = username;
         this.password = password;
         this.nickname = nickname;
-        return new SignUpDTO(username, password, nickname);
     }
 
     public void addRole(MemberRole role){
